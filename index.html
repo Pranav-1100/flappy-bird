@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Flappy Bird</title>
+    
+</head>
+
+<body>
+    <div id="gameContainer">
+        <canvas id="board"></canvas>
+        <div id="scoreDisplay">Score: 0</div>
+        <div id="highScoreDisplay">High Score: 0</div>
+        <div id="startScreen">
+            <h1>Flappy Bird</h1>
+            <p>Press Space or Click to start and flap!</p>
+            <button id="startButton">Start Game</button>
+        </div>
+        <div id="gameOverScreen" style="display: none;">
+            <h1>Game Over</h1>
+            <p>Your Score: <span id="finalScore"></span></p>
+            <p>High Score: <span id="finalHighScore"></span></p>
+            <button id="restartButton">Restart</button>
+        </div>
+    </div>
+
+    <script>
+        // Game variables
+        let board;
+        let boardWidth = 360;
+        let boardHeight = 640;
+        let context;
+        let gameState = "ready";
+
+        
+    </script>
+</body>
+
+</html>
