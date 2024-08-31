@@ -262,6 +262,127 @@
             showGameOverScreen();
         }
 
+        function placePipes() {
+            if (gameState !== "playing") return;
+
+            let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
+            let openingSpace = board.height / 4;
+
+            let topPipe = {
+                img: topPipeImg,
+                x: boardWidth,
+                y: randomPipeY,
+                width: pipeWidth,
+                height: pipeHeight,
+                passed: false
+            }
+            pipeArray.push(topPipe);
+
+            let bottomPipe = {
+                img: bottomPipeImg,
+                x: boardWidth,
+                y: randomPipeY + pipeHeight + openingSpace,
+                width: pipeWidth,
+                height: pipeHeight,
+                passed: false
+            }
+            pipeArray.push(bottomPipe);
+
+            // Randomly place power-ups
+            if (Math.random() < 0.2) { // 20% chance of spawning a power-up
+                placePowerUp();
+            }
+        }
+
+        function placePowerUp() {
+            let powerUp = {
+                x: pipeX + pipeWidth / 2,
+                y: Math.random() * (boardHeight - 50) + 25,
+                radius: 10
+            }
+            powerUpArray.push(powerUp);
+        }
+
+        function moveBird(e) {
+            if ((e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX" || e.type == "click")) {
+                if (gameState === "playing") {
+                    velocityY = -6;
+                }
+            }
+        }
+
+        function detectCollision(a, b) {
+            return a.x < b.x + b.width &&
+                a.x + a.width > b.x &&
+                a.y < b.y + b.height &&
+                a.y + a.height > b.y;
+        }
+
+        function detectCircleCollision(a, circle) {
+            let distX = Math.abs(circle.x - (a.x + a.width / 2));
+            let distY = Math.abs(circle.y - (a.y + a.height / 2));
+
+            if (distX > (a.width / 2 + circle.radius)) { return false; }
+            if (distY > (a.height / 2 + circle.radius)) { return false; }
+
+            if (distX <= (a.width / 2)) { return true; }
+            if (distY <= (a.height / 2)) { return true; }
+
+            let dx = distX - a.width / 2;
+            let dy = distY - a.height / 2;
+            return (dx * dx + dy * dy <= (circle.radius * circle.radius));
+        }
+
+        function activatePowerUp() {
+            powerUpActive = true;
+            powerUpTimer = powerUpDuration;
+            gravity = 0.2; // Reduce gravity
+        }
+
+        function deactivatePowerUp() {
+            powerUpActive = false;
+            gravity = 0.4; // Reset gravity
+        }
+
+        function updateScoreDisplay() {
+            scoreDisplay.textContent = "Score: " + Math.floor(score);
+        }
+
+        function updateHighScoreDisplay() {
+            highScoreDisplay.textContent = "High Score: " + Math.floor(highScore);
+        }
+
+        function showGameOverScreen() {
+            gameOverScreen.style.display = "block";
+            finalScoreSpan.textContent = Math.floor(score);
+            finalHighScoreSpan.textContent = Math.floor(highScore);
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem("flappyBirdHighScore", highScore);
+                updateHighScoreDisplay();
+            }
+        }
+
+        function startGame() {
+            gameState = "playing";
+            startScreen.style.display = "none";
+            velocityY = 0; // Reset vertical velocity
+            score = 0;
+            updateScoreDisplay();
+            
+            // Clear existing pipes and power-ups
+            pipeArray = [];
+            powerUpArray = [];
+            
+            // Reset bird position
+            bird.y = birdY;
+            
+            // Start generating pipes
+            placePipes();
+            pipeInterval = setInterval(placePipes, 1500);
+        }
+
         function restartGame() {
             bird.y = birdY;
             pipeArray = [];
